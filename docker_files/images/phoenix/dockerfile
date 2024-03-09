@@ -1,0 +1,31 @@
+FROM alpine:latest
+
+# Important!  Update this no-op ENV variable when this Dockerfile
+# is updated with the current date. It will force refresh of all
+# of the base images and things like `apt-get update` won't be using
+# old cached versions when the Dockerfile is built.
+ENV REFRESHED_AT=2024-03-05 \
+  # Set this so that CTRL+G works properly
+  TERM=xterm
+
+RUN apk add elixir
+
+# Install NPM
+RUN \
+  apk update && \
+  apk --no-cache --update add \
+  git vim make g++ wget curl inotify-tools \
+  rm -rf /var/cache/apk/*
+
+# Install Hex+Rebar
+RUN mix local.hex --force && \
+  mix local.rebar --force
+
+RUN mix archive.install --force hex phx_new
+
+COPY --chmod=755 bootstrap_project.sh /opt/
+COPY --chmod=755 start_server.sh /opt/
+
+WORKDIR /opt
+
+RUN ./bootstrap_project.sh

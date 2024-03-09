@@ -1,0 +1,43 @@
+services:
+
+  phoenix_app:
+    image: phoenix_app:base
+    container_name: phoenix_app_base
+    hostname: phoenix-app
+    entrypoint:
+      - bash
+    depends_on:
+      - database
+    entrypoint: ["sh"] 
+    ports:
+      - "4000:4000"
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    volumes:
+      #- ./app_code:/opt/host_code # use to initially copy generated hello_world app
+      - ./app_code:/opt # after you copied the starter project to your host app_code folder
+    environment:
+      PGUSER: "developer"
+      PGPASS: "password"
+
+  database:
+    image: postgres:phoenix_app_db
+    container_name: phoenix_app_db
+    hostname: phoenix-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+      POSTGRES_USER: "developer"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "phoenix_app"
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+
+    # or set shared memory limit when deploy via swarm stack
+    #volumes:
+    #  - type: tmpfs
+    #    target: /dev/shm
+    #    tmpfs:
+    #      size: 134217728 # 128*2^20 bytes = 128Mb

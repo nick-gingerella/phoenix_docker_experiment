@@ -8,6 +8,10 @@ ENV REFRESHED_AT=2024-03-05 \
   # Set this so that CTRL+G works properly
   TERM=xterm
 
+# determines name of app directory that gets created when bootstrap_project.sh gets run
+ARG PROJECT_NAME
+ENV PHOENIX_PROJECT_NAME=$PROJECT_NAME
+
 RUN apk add elixir
 
 # Install NPM

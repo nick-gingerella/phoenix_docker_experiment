@@ -1,9 +1,9 @@
 services:
-
   phoenix_app:
-    image: phoenix_app:base
-    container_name: phoenix_app_base
-    hostname: phoenix-app
+    # change image and container name to phoenix_app_YOUR-PROJECT-NAME:base, to match what was built in the docker_files/.build_images.sh step
+    image: phoenix_app_hello_world:base
+    container_name: phoenix_app_hello_world
+    hostname: phoenix-app-helloworld
     entrypoint:
       - bash
     depends_on:
@@ -23,14 +23,14 @@ services:
   database:
     image: postgres:phoenix_app_db
     container_name: phoenix_app_db
-    hostname: phoenix-db
+    hostname: phoenix-app-hello-world-db
     ports:
       - "5432:5432"
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust"
       POSTGRES_USER: "developer"
       POSTGRES_PASSWORD: "password"
-      POSTGRES_DB: "phoenix_app"
+      POSTGRES_DB: "phoenix_app_hello_world"
     restart: always
     # set shared memory limit when using docker-compose
     shm_size: 128mb

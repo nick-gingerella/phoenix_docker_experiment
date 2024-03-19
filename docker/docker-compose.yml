@@ -1,36 +1,34 @@
 services:
   phoenix_app:
     # change image and container name to phoenix_app_YOUR-PROJECT-NAME:base, to match what was built in the docker_files/.build_images.sh step
-    image: phoenix_app_hello_world:base
-    container_name: phoenix_app_hello_world
-    hostname: phoenix-app-helloworld
-    entrypoint:
-      - bash
+    image: hue-light-app
+    container_name: hue-light-app
+    hostname: hue-light-app
     depends_on:
       - database
     entrypoint: ["sh"] 
     ports:
-      - "4000:4000"
+      - "4200:4200"
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     volumes:
-      #- ./app_code:/opt/host_code # use to initially copy generated hello_world app
-      - ./app_code:/opt # after you copied the starter project to your host app_code folder
+      - ./app_code:/opt/host_code # use to initially copy generated hello_world app
+      #- ./app_code:/opt # after you copied the starter project to your host app_code folder
     environment:
-      PGUSER: "developer"
-      PGPASS: "password"
+      PGUSER: "nick"
+      PGPASS: "nack"
 
   database:
-    image: postgres:phoenix_app_db
-    container_name: phoenix_app_db
-    hostname: phoenix-app-hello-world-db
+    image: postgres:hue-light-app-DB
+    container_name: hue-light-app-DB
+    hostname: hue-light-app-DB
     ports:
       - "5432:5432"
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust"
-      POSTGRES_USER: "developer"
-      POSTGRES_PASSWORD: "password"
-      POSTGRES_DB: "phoenix_app_hello_world"
+      POSTGRES_USER: "nick"
+      POSTGRES_PASSWORD: "nack"
+      POSTGRES_DB: "light-info"
     restart: always
     # set shared memory limit when using docker-compose
     shm_size: 128mb

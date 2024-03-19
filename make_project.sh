@@ -124,23 +124,6 @@ main() {
 
 }
 
-# THIS IS WHERE THE MEAT OF THE WORK GOES
-start_building_docker_stuff() {
-  project_name=$1
-  phoenix_port=$2
-  db_name=$3
-  db_user=$4
-  db_pass=$5
-  db_port=$6
-
-  echo "Will start building docker for phoenix project with the following configurations:"
-  echo "Project Name: ${project_name}"
-  echo "App listening on port ${phoenix_port}"
-  echo "Connected to a Postgres database named ${db_name}"
-  echo "whose database credentials are: user:${db_user} and password:${db_pass} listening on port ${db_port}"
-  # start calling build scripts
-}
-
 #interactive mode
 interactive() {
   # prompt user for a project name (no spaces or special characters)
@@ -149,7 +132,7 @@ interactive() {
 
   # make sure project name was not empty. If so, ask for name again
   # the project name can't have spaces or special characters
-  while [[ ! $project_name =~ ^[a-zA-Z]+$ ]]
+  while [[ ! $project_name =~ ^[a-zA-Z_-]+$ ]]
   do
       if [ -z "$project_name" ]
       then
@@ -245,7 +228,51 @@ interactive() {
   done
   echo "db_port: ${db_port}"
 
+
+  # set env variables for shell to help populate config files and scripts
+  export DOCKER_BOOTSTRAP_PHOENIX_PROJECT_NAME=${project_name}
+  export DOCKER_BOOTSTRAP_PHOENIX_PORT=${port_number}
+  export DOCKER_BOOTSTRAP_DB_NAME=${db_name}
+  export DOCKER_BOOTSTRAP_DB_USER=${db_user}
+  export DOCKER_BOOTSTRAP_DB_PASS=${db_pass}
+  export DOCKER_BOOTSTRAP_DB_PORT=${db_port}
   start_building_docker_stuff ${project_name} ${phoenix_port} ${db_name} ${db_user} ${db_pass} ${db_port}
+}
+
+# THIS IS WHERE THE MEAT OF THE WORK GOES
+start_building_docker_stuff() {
+  project_name=${DOCKER_BOOTSTRAP_PHOENIX_PROJECT_NAME}
+  phoenix_port=${DOCKER_BOOTSTRAP_PHOENIX_PORT}
+  db_name=${DOCKER_BOOTSTRAP_DB_NAME}
+  db_user=${DOCKER_BOOTSTRAP_DB_USER}
+  db_pass=${DOCKER_BOOTSTRAP_DB_PASS}
+  db_port=${DOCKER_BOOTSTRAP_DB_PORT}
+
+  echo "Will start building docker for phoenix project with the following configurations:"
+  echo "Project Name: ${project_name}"
+  echo "App listening on port ${phoenix_port}"
+  echo "Connected to a Postgres database named ${db_name}"
+  echo "whose database credentials are: user:${db_user} and password:${db_pass} listening on port ${db_port}"
+
+  # if docker/docker-compose.yml exists, remove it
+  if [ -f "docker/docker-compose.yml" ]
+  then
+      rm docker/docker-compose.yml
+  fi
+
+  # make a new docker-compose.yml file from the template
+  cp docker/docker-compose.yml.template docker/docker-compose.yml
+  sed -i '' "s+<PHOENIX_APP_IMAGE_NAME>+${project_name}+g" docker/docker-compose.yml
+  sed -i '' "s+<PHOENIX_APP_CONTAINER_NAME>+${project_name}+g" docker/docker-compose.yml
+  sed -i '' "s+<PHOENIX_APP_HOSTNAME>+${project_name}+g" docker/docker-compose.yml
+  sed -i '' "s+<PHOENIX_APP_NAME>+${project_name}+g" docker/docker-compose.yml
+  sed -i '' "s+<PHOENIX_APP_LISTEN_PORT>+${phoenix_port}+g" docker/docker-compose.yml
+  sed -i '' "s+<DB_NAME>+${db_name}+g" docker/docker-compose.yml
+  sed -i '' "s+<DB_USER>+${db_user}+g" docker/docker-compose.yml
+  sed -i '' "s+<DB_PASSWORD>+${db_pass}+g" docker/docker-compose.yml
+  sed -i '' "s+<DB_PORT>+${db_port}+g" docker/docker-compose.yml
+
+  # start calling build scripts
 }
 
 # a main function is used so functions can be defined throughout file

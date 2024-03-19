@@ -273,6 +273,8 @@ start_building_docker_stuff() {
   sed -i '' "s+<DB_PORT>+${db_port}+g" docker/docker-compose.yml
 
   # start calling build scripts
+  pushd docker
+  ./build_images.sh ${project_name}
 }
 
 # a main function is used so functions can be defined throughout file

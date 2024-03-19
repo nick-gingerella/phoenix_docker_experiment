@@ -4,15 +4,14 @@
 
 set -x
 
-# set name of app to what you want. will default to "hello_world" if empty
-PROJ_NAME="hello_world"
-if [[ -z $1 ]]; then
-  echo "using default project name for phoenix app $PROJ_NAME"
-else
-  PROJ_NAME=$1
+# if no project name is passed, error
+if [ -z $1 ]; then
+  echo "Error: no project name passed. Usage: ./build_images.sh <project-name>"
+  exit 1
 fi
-export DOCKER_PHOENIX_PROJECT_NAME="$PROJ_NAME"
-  
+
+# set name of app to what you want
+PROJ_NAME="${1}"
 
 # iterate through all directories under images
 for dir in images/*/
@@ -30,12 +29,7 @@ do
     continue
   fi
 
-  if [ "$image_name"=="phoenix" ]; then
-    ./build_image.sh $DOCKER_PHOENIX_PROJECT_NAME
-    unset DOCKER_PHOENIX_PROJECT_NAME
-  else
-    ./build_image.sh 
-  fi
-
+  ./build_image.sh $PROJ_NAME
+  
   popd
 done

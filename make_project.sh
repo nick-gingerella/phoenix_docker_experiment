@@ -331,11 +331,11 @@ start_building_docker_stuff() {
   rm $GENERATED_DOCKER_FILES_DIR/images/phoenix/start_server.sh.template
   # sed make_images.sh to use replace variables with their values
   sed -i '' "s+GENERATED_FLAG=0+GENERATED_FLAG=1+g" $GENERATED_DOCKER_FILES_DIR/build_images.sh
-  sed -i '' "s+PROJ_NAME=""+PROJ_NAME=${project_name}+g" $GENERATED_DOCKER_FILES_DIR/build_images.sh
-  sed -i '' "s+PROJ_PORT=""+PROJ_PORT=${phoenix_port}+g" $GENERATED_DOCKER_FILES_DIR/build_images.sh
-  sed -i '' "s+PROJ_DB_NAME=""+PROJ_DB_NAME=${db_name}+g" $GENERATED_DOCKER_FILES_DIR/build_images.sh
-  sed -i '' "s+PROJ_DB_USER=""+PROJ_DB_USER=${db_user}+g" $GENERATED_DOCKER_FILES_DIR/build_images.sh
-  sed -i '' "s+PROJ_DB_PASS=""+PROJ_DB_PASS=${db_pass}+g" $GENERATED_DOCKER_FILES_DIR/build_images.sh
+  sed -i '' "s+PROJ_NAME=\"\"+PROJ_NAME=\"${project_name}\"+g" $GENERATED_DOCKER_FILES_DIR/build_images.sh
+  sed -i '' "s+PROJ_PORT=\"\"+PROJ_PORT=\"${phoenix_port}\"+g" $GENERATED_DOCKER_FILES_DIR/build_images.sh
+  sed -i '' "s+PROJ_DB_NAME=\"\"+PROJ_DB_NAME=\"${db_name}\"+g" $GENERATED_DOCKER_FILES_DIR/build_images.sh
+  sed -i '' "s+PROJ_DB_USER=\"\"+PROJ_DB_USER=\"${db_user}\"+g" $GENERATED_DOCKER_FILES_DIR/build_images.sh
+  sed -i '' "s+PROJ_DB_PASS=\"\"+PROJ_DB_PASS=\"${db_pass}\"+g" $GENERATED_DOCKER_FILES_DIR/build_images.sh
 
   # clean up the generated shell scripts in images directory
   rm docker/docker_files/images/phoenix/bootstrap_project.sh

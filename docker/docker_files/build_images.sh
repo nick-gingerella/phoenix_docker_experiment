@@ -11,7 +11,7 @@ PROJ_DB_NAME=""
 PROJ_DB_USER=""
 PROJ_DB_PASS=""
 
-if [[ GENERATED_FLAG -eq 0]]; then
+if [[ GENERATED_FLAG -eq 0 ]]; then
   # if no project name is passed, error
   if [ -z $1 ]; then
     echo "Error: no project name passed. Usage: ./build_images.sh <project-name>"

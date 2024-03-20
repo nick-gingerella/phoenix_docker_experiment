@@ -1,0 +1,1 @@
+pgcli -h localhost -p <DB_PORT> -u <DB_USER> -d <DB_NAME>

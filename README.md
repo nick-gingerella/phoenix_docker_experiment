@@ -4,28 +4,14 @@ This guide will help you set up two containers, `phoenix_app_base` (where your c
 
 ## Steps
 
-1. **Ensure Host Code Directory Exists:**
+1. **Run make_project.sh to generate Phoenix + Postgres images:**
+   Run `./make_project.sh -i` to start project generation. You will be prompted for info about the app you want to work on (name, port to listen on, database name, credentials, etc.)
 
-   Make sure the `host_code` directory exists on your host machine, and uncomment the first volume definition in the `docker-compose.yml` file. The second volume definition should be commented out.
+   This will create a Phoenix App image where your code and app will live, and a Postgres image that your app will connect to. The database credentials you choose will be how the app connects to the postgres DB (which will automatically be configured to use your credentials)
 
-   ```yaml
-   services:
-       phoenix_app:
-           volumes:
-               - ./app_code:/opt/host_code # use to initially copy generated hello_world app
-               #- ./app_code:/opt # after you copied the starter project to your host app_code folder
-   ```
+   When the script finishes, you should have a `docker-compose.yml`, `attach_to_phoenix.sh`, and a `pgcli_to_db.sh` script in the top level directory, confgured to start and connect to your new phoenix app and db docker images.
 
-2. **Build Docker Images:**
-
-   Navigate to the `docker_files` directory and run the `build_images.sh` script to build the PostgreSQL database and Phoenix images.
-
-   ```bash
-   cd docker_files
-   ./build_images.sh
-   ```
-
-3. **Start Containers:**
+2. **Start Containers:**
 
    Use Docker Compose to bring up the containers.
 
@@ -33,9 +19,25 @@ This guide will help you set up two containers, `phoenix_app_base` (where your c
    docker-compose up -d
    ```
 
-4. **Copy Hello World Project:**
+3. **Test The containers:**
+   You can check the containers are working properly by starting the phoenix app server and visiting it from your dev machine's browser on `localhost:<phoenix port you chose>`
 
-   Go into the `app_code` directory. There should be a `hello_world` directory in there that the Phoenix image file created. Copy it to your `app_code` directory.
+   ```
+   ./attach_to_phoenix.sh
+
+   # you should now be in the docker container running the phoenix app
+   ./start_server.sh
+
+   # the phoenix app server should now be running and listening on it's port.
+   ```
+
+   use a web browser and go to `localhost:<your phoenix port>` and verify you get teh phoenix framework startup page.
+
+   If this worked, then the generated project in the container is configured properly, and you can move on to copying this project to your local machine so you can edit files and watch them update live with edits.
+
+4. **Copy your Project to host machine for active development:**
+
+   Go into the `app_code` directory. There should be a `<your project name>` directory in there that the Phoenix image file created. Copy it to the `host_code` directory. This maps to your `app_code` directory on your local machine, so once complete, you should be able to see the `<your project name>` directory on your dev machine.
 
 5. **Shutdown Containers:**
 
@@ -45,9 +47,9 @@ This guide will help you set up two containers, `phoenix_app_base` (where your c
    docker-compose down
    ```
 
-6. **Update Docker Compose File:**
+6. **Update Docker Compose File So the Generated app is always on your local machine:**
 
-   Edit the `docker-compose.yml` file to use the second volume mount line. This will allow your copy of the `hello_world` project to overwrite the container's `/opt` directory so you can freely change it.
+   Edit the `docker-compose.yml` file to use the second volume mount line. This will allow your copy of the `<your project name>` project to overwrite the container's `/opt` directory so you can freely change it.
 
    ```yaml
    services:
@@ -65,53 +67,13 @@ This guide will help you set up two containers, `phoenix_app_base` (where your c
    docker-compose up -d
    ```
 
-8. **Update Configurations:**
+8.  **Start Phoenix Server:**
 
-   Change some configurations in the `app_code/hello_world` directory so Phoenix in the container can connect to the PostgreSQL database (`phoenix_app_db` container), and your host machine can connect to the Phoenix app running in the container.
-
-   - Edit `app_code/hello_world/config/config.exists`:
-
-     ```elixir
-     # Configures the endpoint
-     config :hello_world, HelloWorldWeb.Endpoint,
-     url: [host: "0.0.0.0"], #<----this needs to be 0.0.0.0. not localhost
-     ```
-
-   - Edit `app_code/hello_world/config/dev.exs`:
-
-     ```elixir
-     # Configure your database
-     # use these user, pass, hostname, and db (setup in the postgres dockerfile and docker-compose file at the top level)
-     config :hello_world, HelloWorld.Repo,
-     username: "developer",
-     password: "password",
-     hostname: "phoenix_app_db",
-     database: "phoenix_app",
-     stacktrace: true,
-     show_sensitive_data_on_connection_error: true,
-     pool_size: 10
-
-     config :hello_world, HelloWorldWeb.Endpoint,
-     # Binding to loopback ipv4 address prevents access from other machines.
-     # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-     http: [ip: {0, 0, 0, 0}, port: 4000], #<------- change to 0.0.0.0, not 127.0.0.1
-     ```
-
-9. **Start Phoenix Server:**
-
-   - Attach to the container using the helper script:
+   - Attach to the container and start server using the helper script:
 
      ```bash
      ./attach_to_phoenix.sh
+     
+     # in the phoenix container
+     ./start_server.sh
      ```
-
-   - Change to the `hello_world` directory and start the server:
-
-     ```bash
-     cd hello_world
-     mix phx.server
-     ```
-
-   If the server starts without issue, you should be able to go to `localhost:4000` in your host's browser and see the Phoenix Elixir app getting started page!
-
-```

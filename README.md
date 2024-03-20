@@ -5,6 +5,7 @@ This guide will help you set up two containers, `phoenix_app_base` (where your c
 ## Steps
 
 1. **Run make_project.sh to generate Phoenix + Postgres images:**
+
    Run `./make_project.sh -i` to start project generation. You will be prompted for info about the app you want to work on (name, port to listen on, database name, credentials, etc.)
 
    This will create a Phoenix App image where your code and app will live, and a Postgres image that your app will connect to. The database credentials you choose will be how the app connects to the postgres DB (which will automatically be configured to use your credentials)
@@ -20,6 +21,7 @@ This guide will help you set up two containers, `phoenix_app_base` (where your c
    ```
 
 3. **Test The containers:**
+
    You can check the containers are working properly by starting the phoenix app server and visiting it from your dev machine's browser on `localhost:<phoenix port you chose>`
 
    ```
@@ -37,7 +39,7 @@ This guide will help you set up two containers, `phoenix_app_base` (where your c
 
 4. **Copy your Project to host machine for active development:**
 
-   Go into the `app_code` directory. There should be a `<your project name>` directory in there that the Phoenix image file created. Copy it to the `host_code` directory. This maps to your `app_code` directory on your local machine, so once complete, you should be able to see the `<your project name>` directory on your dev machine.
+   Go into the `app_code` directory. There should be a `<your project name>` directory in there that the Phoenix image file created. Copy it, and `start_server.sh` to the `host_code` directory. This maps to your `app_code` directory on your local machine, so once complete, you should be able to see the `<your project name>` directory on your dev machine.
 
 5. **Shutdown Containers:**
 

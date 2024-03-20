@@ -22,9 +22,25 @@ fi
 # url: [host:"x.x.x.x"],   --->  url: [host:"0.0.0.0"],
 
 # sed config file <project_name>/config/dev.exs
-# username: "postgres",  --->  username: "<db_username>",
-# password: "postgres",  --->  password: "<db_password>",
-# hostname: "localhost", --->  hostname: "<db_hostname>",
-# database: "hello_world_dev", --->  database: "<db_name>",
+# username: "postgres",  --->  username: "<PHOENIX_PROJECT_DB_USER>",
+# password: "postgres",  --->  password: "<PHOENIX_PROJECT_DB_PASSWORD>",
+# hostname: "localhost", --->  hostname: "<PHOENIX_PROJECT_NAME>",
+# database: "hello_world_dev", --->  database: "<PHOENIX_PROJECT_DB_NAME>",
 # ...
-# http: [ip:{127, 0, 0, 1}, port: 4000], ---> http: [ip:{0, 0, 0, 0}, port: <phoenix_port>],
+# http: [ip:{127, 0, 0, 1}, port: 4000], ---> http: [ip:{0, 0, 0, 0}, port: <PHOENIX_PROJECT_PORT>],
+
+# env vars
+# ARG PROJECT_NAME
+# ENV PHOENIX_PROJECT_NAME=$PROJECT_NAME
+
+# ARG PHOENIX_PORT
+# ENV PHOENIX_PROJECT_PORT=$PHOENIX_PORT
+
+# ARG PHOENIX_DB_NAME
+# ENV PHOENIX_PROJECT_DB_NAME=$PHOENIX_DB_NAME
+
+# ARG PHOENIX_DB_USER
+# ENV PHOENIX_PROJECT_DB_USER=$PHOENIX_DB_USER
+
+# ARG PHOENIX_DB_PASSWORD
+# ENV PHOENIX_PROJECT_DB_PASSWORD=$PHOENIX_DB_PASSWORD

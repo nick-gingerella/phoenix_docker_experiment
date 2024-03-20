@@ -1,4 +1,5 @@
 app_code/*
 attach_to_phoenix.sh
 pgcli_to_db.sh
+docker-compose.yml
 docker/docker-compose.yml

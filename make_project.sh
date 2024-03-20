@@ -316,7 +316,7 @@ start_building_docker_stuff() {
   # start calling build scripts
   pushd docker/docker_files
   #./docker/docker_files/build_images.sh ${project_name}
-  ./build_images.sh ${project_name}
+  ./build_images.sh ${project_name} ${phoenix_port} ${db_name} ${db_user} ${db_pass}
   popd
 
   # clean up the generated shell scripts in images directory

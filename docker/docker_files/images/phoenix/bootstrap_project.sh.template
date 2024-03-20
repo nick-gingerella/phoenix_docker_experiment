@@ -20,20 +20,24 @@ fi
 #TODO: change config files for the phoenix project to use 0.0.0.0 for listening address and Port to listne on
 # sed config file <project_name>/config/config.exs
 # url: [host:"x.x.x.x"],   --->  url: [host:"0.0.0.0"],
-sed -i "s+url: \[host: \"[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\"\]+url: [host: \"0.0.0.0\"]"+ $PHOENIX_PROJECT_NAME/config/config.exs
+sed -i "s/url: \[host: \".*\"\]/url: [host: \"0.0.0.0\"]/" config/config.exs
 
 # sed config file <project_name>/config/dev.exs
 # username: "postgres",  --->  username: "<PHOENIX_PROJECT_DB_USER>",
-sed -i "s+username: \"[a-A0-9_-]+\"+username: \"$PHOENIX_PROJECT_DB_USER\""+ $PHOENIX_PROJECT_NAME/config/dev.exs
+sed -i "s/username: \".*\"/username: \"$PHOENIX_PROJECT_DB_USER\"/" config/dev.exs
 # password: "postgres",  --->  password: "<PHOENIX_PROJECT_DB_PASSWORD>",
-sed -i "s+password: \"[a-A0-9_-]+\"+password: \"$PHOENIX_PROJECT_DB_PASSWORD\""+ $PHOENIX_PROJECT_NAME/config/dev.exs
+sed -i "s/password: \".*\"/password: \"$PHOENIX_PROJECT_DB_PASSWORD\"/" config/dev.exs
 # hostname: "localhost", --->  hostname: "<PHOENIX_PROJECT_NAME>",
-sed -i "s+hostname: \"[a-A0-9_-]+\"+hostname: \"$PHOENIX_PROJECT_NAME\""+ $PHOENIX_PROJECT_NAME/config/dev.exs
+
+PHOENIX_PROJECT_DB_NAME="${PHOENIX_PROJECT_NAME}_DB"
+sed -i "s/hostname: \".*\"/hostname: \"$PHOENIX_PROJECT_DB_NAME\"/" config/dev.exs
 # database: "hello_world_dev", --->  database: "<PHOENIX_PROJECT_DB_NAME>",
-sed -i "s+database: \"[a-A0-9_-]+\"+database: \"$PHOENIX_PROJECT_DB_NAME\""+ $PHOENIX_PROJECT_NAME/config/dev.exs
+sed -i "s/database: \".*\"/database: \"$PHOENIX_PROJECT_NAME\"/" config/dev.exs
 # ...
 # http: [ip:{127, 0, 0, 1}, port: 4000], ---> http: [ip:{0, 0, 0, 0}, port: <PHOENIX_PROJECT_PORT>],
-sed -i "s+http: \[ip:{[0-9]*, [0-9]*, [0-9]*, [0-9]*}, port: [0-9]*\]+http: [ip:{0, 0, 0, 0}, port: $PHOENIX_PROJECT_PORT]"+ $PHOENIX_PROJECT_NAME/config/dev.exs
+sed -i "s/http:.*,/http: [ip: {0, 0, 0, 0}, port: $PHOENIX_PROJECT_PORT],/" config/dev.exs
+
+# sed -i "s/http: \[ip:{[0-9]*, [0-9]*, [0-9]*, [0-9]*}, port: [0-9]*\]}/http: [ip: {0, 0, 0, 0}, port: $PHOENIX_PROJECT_PORT]/" config/dev.exs
 
 # env vars
 # ARG PROJECT_NAME

@@ -18,3 +18,13 @@ if [ ! -d "$PHOENIX_PROJECT_NAME" ]; then
 fi
 
 #TODO: change config files for the phoenix project to use 0.0.0.0 for listening address and Port to listne on
+# sed config file <project_name>/config/config.exs
+# url: [host:"x.x.x.x"],   --->  url: [host:"0.0.0.0"],
+
+# sed config file <project_name>/config/dev.exs
+# username: "postgres",  --->  username: "<db_username>",
+# password: "postgres",  --->  password: "<db_password>",
+# hostname: "localhost", --->  hostname: "<db_hostname>",
+# database: "hello_world_dev", --->  database: "<db_name>",
+# ...
+# http: [ip:{127, 0, 0, 1}, port: 4000], ---> http: [ip:{0, 0, 0, 0}, port: <phoenix_port>],

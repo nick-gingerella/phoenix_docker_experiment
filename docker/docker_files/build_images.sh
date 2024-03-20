@@ -4,38 +4,47 @@
 
 set -x
 
-# if no project name is passed, error
-if [ -z $1 ]; then
-  echo "Error: no project name passed. Usage: ./build_images.sh <project-name>"
-  exit 1
-fi
+GENERATED_FLAG=0
+PROJ_NAME=""
+PROJ_PORT=""
+PROJ_DB_NAME=""
+PROJ_DB_USER=""
+PROJ_DB_PASS=""
 
-if [ -z $2 ]; then
-  echo "Error: no project port passed. Usage: ./build_images.sh <project-name> <project-port>"
-  exit 1
-fi
+if [[ GENERATED_FLAG -eq 0]]; then
+  # if no project name is passed, error
+  if [ -z $1 ]; then
+    echo "Error: no project name passed. Usage: ./build_images.sh <project-name>"
+    exit 1
+  fi
 
-if [ -z $3 ]; then
-  echo "Error: no project db name passed. Usage: ./build_images.sh <project-name> <project-port> <project-db-name>"
-  exit 1
-fi
+  if [ -z $2 ]; then
+    echo "Error: no project port passed. Usage: ./build_images.sh <project-name> <project-port>"
+    exit 1
+  fi
 
-if [ -z $4 ]; then
-  echo "Error: no project db user passed. Usage: ./build_images.sh <project-name> <project-port> <project-db-name> <project-db-user>"
-  exit 1
-fi
+  if [ -z $3 ]; then
+    echo "Error: no project db name passed. Usage: ./build_images.sh <project-name> <project-port> <project-db-name>"
+    exit 1
+  fi
 
-if [ -z $5 ]; then
-  echo "Error: no project db password passed. Usage: ./build_images.sh <project-name> <project-port> <project-db-name> <project-db-user> <project-db-password>"
-  exit 1
-fi
+  if [ -z $4 ]; then
+    echo "Error: no project db user passed. Usage: ./build_images.sh <project-name> <project-port> <project-db-name> <project-db-user>"
+    exit 1
+  fi
 
-# set name of app to what you want
-PROJ_NAME="${1}"
-PROJ_PORT="${2}"
-PROJ_DB_NAME="${3}"
-PROJ_DB_USER="${4}"
-PROJ_DB_PASS="${5}"
+  if [ -z $5 ]; then
+    echo "Error: no project db password passed. Usage: ./build_images.sh <project-name> <project-port> <project-db-name> <project-db-user> <project-db-password>"
+    exit 1
+  fi
+
+  # set name of app to what you want
+  PROJ_NAME="${1}"
+  PROJ_PORT="${2}"
+  PROJ_DB_NAME="${3}"
+  PROJ_DB_USER="${4}"
+  PROJ_DB_PASS="${5}"
+fi
 
 # iterate through all directories under images
 for dir in images/*/

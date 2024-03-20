@@ -162,7 +162,7 @@ interactive() {
   echo "project_name: ${project_name}"
 
   # prompt user for port number phoenix wpplication will run on. Default is 4000
-  echo "Enter a port number for the phoenix application to run on. Default is 4000:"
+  echo "Enter a port number for the phoenix application to run on. Default is ${default_phoenix_port}:"
   read -r port_number
   # check if port number is empty. If so, set it to 4000
   if [ -z "$port_number" ]
@@ -173,7 +173,7 @@ interactive() {
   # check if port number is a number. If not, ask for port number again
   while ! [[ $port_number =~ ^[0-9]+$ ]]
   do
-      echo "Port number must be a number. Please enter a port number for the phoenix application to run on. Default is 4000:"
+      echo "Port number must be a number. Please enter a port number for the phoenix application to run on. Default is ${default_phoenix_port}:"
       read -r port_number
       if [ -z "$port_number" ]
       then
@@ -199,7 +199,7 @@ interactive() {
   echo "db_name: ${db_name}"
 
   # prompt user for a database user. Default is postgres
-  echo "Enter a database user. Default is postgres:"
+  echo "Enter a database user. Default is ${default_db_user}:"
   read -r db_user  
 
   # db must contain only letters and no special characters
@@ -211,13 +211,13 @@ interactive() {
           db_user="postgres"
           break
       fi
-      echo "Database user must contain only letters. Please enter a database user. Default is postgres:"
+      echo "Database user must contain only letters. Please enter a database user. Default is ${default_db_user}:"
       read -r db_user
   done
   echo "db_user: ${db_user}"
 
   # prompt user for a database password. Default is postgres
-  echo "Enter a database password. Default is postgres:"
+  echo "Enter a database password. Default is ${default_db_pass}:"
   read -r db_pass
 
   if [ -z "$db_pass" ]
@@ -227,23 +227,8 @@ interactive() {
   fi
   echo "db_pass: ${db_pass}"
 
-  # prompt user for a database port. Default is 5432
-  echo "Enter a database port. Default is 5432:"
-  read -r db_port
-
-  # port must be a number
-  while ! [[ $db_port =~ ^[0-9]+$ ]]
-  do
-      if [ -z "$db_port" ]
-      then
-          # default
-          db_port=${default_db_port}
-          break
-      fi
-      echo "Database port must be a number. Please enter a database port. Default is 5432:"
-      read -r db_port
-  done
-  echo "db_port: ${db_port}"
+# don't let choose database port, I think Phoenix just assumes the postgres default
+db_port=${default_db_port}
 
 
   # set env variables for shell to help populate config files and scripts
@@ -326,6 +311,7 @@ start_building_docker_stuff() {
   # copy build_images.sh and docker files to top level so they can be saved off as a standalone project
   GENERATED_DOCKER_FILES_DIR="${project_name}_docker_files"
   cp -r docker/docker_files/ ./$GENERATED_DOCKER_FILES_DIR
+
   # remove the template files from teh generated docker files
   rm $GENERATED_DOCKER_FILES_DIR/images/phoenix/bootstrap_project.sh.template
   rm $GENERATED_DOCKER_FILES_DIR/images/phoenix/start_server.sh.template

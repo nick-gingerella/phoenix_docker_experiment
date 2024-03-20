@@ -266,6 +266,9 @@ interactive() {
 
 # THIS IS WHERE THE MEAT OF THE WORK GOES
 start_building_docker_stuff() {
+  # cleanup top level scripts, since they'll be regenerated
+  ./clean_project.sh
+
   project_name=${DOCKER_BOOTSTRAP_PHOENIX_PROJECT_NAME}
   phoenix_port=${DOCKER_BOOTSTRAP_PHOENIX_PORT}
   db_name=${DOCKER_BOOTSTRAP_DB_NAME}

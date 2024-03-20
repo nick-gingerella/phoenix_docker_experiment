@@ -307,7 +307,7 @@ start_building_docker_stuff() {
   sed -i '' "s+<DB_NAME>+${db_name}+g" docker/pgcli_to_db.sh
 
   cp docker/docker_files/images/phoenix/bootstrap_project.sh.template docker/docker_files/images/phoenix/bootstrap_project.sh
-  sed -i '' "s+<PHOENIX_PROJECT_NAME>+${project_name}+g" docker/docker_files/images/bootstrap_project.sh
+  sed -i '' "s+<PHOENIX_PROJECT_NAME>+${project_name}+g" docker/docker_files/images/phoenix/bootstrap_project.sh
 
   cp docker/docker_files/images/phoenix/start_server.sh.template docker/docker_files/images/phoenix/start_server.sh
   sed -i '' "s+<PHOENIX_PROJECT_NAME>+${project_name}+g" docker/docker_files/images/phoenix/start_server.sh

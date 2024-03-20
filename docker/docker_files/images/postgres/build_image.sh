@@ -7,4 +7,4 @@ else
   exit 1
 fi
 
-docker build -t postgres:$PROJECT_NAME-DB .
+docker build -t postgres:$PROJECT_NAME .

@@ -19,6 +19,7 @@ do
   # remove trailing slash
   dir=${dir%*/}
   image_name=$(basename "$dir")
+
   pushd $dir
   # build the image using the build_image.sh script
   # verify the build script exists
@@ -29,7 +30,14 @@ do
     continue
   fi
 
-  ./build_image.sh $PROJ_NAME
+  # if project name is passed, pass it to the build script. If not, echo error
+  pwd dir
+  if [ -z $PROJ_NAME ]; then
+    echo "Error: no project name passed. Usage: ./build_images.sh <project-name>"
+  else
+    echo "Building image for $image_name with project name $PROJ_NAME"
+    ./build_image.sh $PROJ_NAME
+  fi
   
   popd
 done

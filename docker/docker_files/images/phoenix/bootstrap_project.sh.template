@@ -9,10 +9,12 @@ else
   echo "creating project $PHOENIX_PROJECT_NAME"
 fi
 
-# if hello_world directory doesn't exist, make it
+# if the project directory doesn't exist, make it
 if [ ! -d "$PHOENIX_PROJECT_NAME" ]; then
   # cd into hello_world and run 'mix phx.new hello_world'
   echo yes | mix phx.new $PHOENIX_PROJECT_NAME
   cd $PHOENIX_PROJECT_NAME
   echo yes | mix deps.get
 fi
+
+#TODO: change config files for the phoenix project to use 0.0.0.0 for listening address and Port to listne on

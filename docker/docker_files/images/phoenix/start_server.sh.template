@@ -1,8 +1,8 @@
 #/bin/bash
 
 # if hello_world directory exists, assume it was made using 'mix phx.new hello_world'
-if [ -d "hello_world" ]; then
+if [ -d "<PHOENIX_PROJECT_NAME>" ]; then
   # start phoenix server using mix phx.server
-  cd hello_world
+  cd <PHOENIX_PROJECT_NAME>
   mix phx.server
 fi

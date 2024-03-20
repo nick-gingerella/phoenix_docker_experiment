@@ -1,0 +1,2 @@
+#!/bin/zsh
+docker attach <PHOENIX_PROJECT_NAME>

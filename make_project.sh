@@ -1,9 +1,9 @@
 #!/bin/zsh
 
 # default values for names needed in build + configuration process
-default_project_name="hello-world"
+default_project_name="hello_world"
 default_phoenix_port=4000
-default_db_name="hello-world"
+default_db_name="hello_world"
 default_db_user="postgres"
 default_db_pass="postgres"
 default_db_port=5432
@@ -32,7 +32,7 @@ main() {
              ;;
           n)
              project_name=${OPTARG}
-             if ! [[ $project_name =~ ^[a-zA-Z0-9_-]+$ ]]
+             if ! [[ $project_name =~ ^[a-zA-Z0-9_]+$ ]]
              then
                  echo "Option -${OPTARG} requires an argument" 1>&2
                  usage
@@ -48,7 +48,7 @@ main() {
              ;;
           d )
              db_name=${OPTARG}
-             if ! [[ $db_name =~ ^[a-zA-Z0-9_-]+$ ]]
+             if ! [[ $db_name =~ ^[a-zA-Z0-9_]+$ ]]
              then
                  echo "Option -${OPTARG} requires an argument" 1>&2
                  usage
@@ -120,8 +120,25 @@ main() {
   echo "db_pass: ${db_pass}"
   echo "db_port: ${db_port}"
 
-  start_building_docker_stuff ${project_name} ${phoenix_port} ${db_name} ${db_user} ${db_pass} ${db_port}
+  export DOCKER_BOOTSTRAP_PHOENIX_PROJECT_NAME=${project_name}
+  export DOCKER_BOOTSTRAP_PHOENIX_PORT=${port_number}
+  export DOCKER_BOOTSTRAP_DB_NAME=${db_name}
+  export DOCKER_BOOTSTRAP_DB_USER=${db_user}
+  export DOCKER_BOOTSTRAP_DB_PASS=${db_pass}
+  export DOCKER_BOOTSTRAP_DB_PORT=${db_port}
+  start_building_docker_stuff
+  unset DOCKER_BOOTSTRAP_PHOENIX_PROJECT_NAME
+  unset DOCKER_BOOTSTRAP_PHOENIX_PORT
+  unset DOCKER_BOOTSTRAP_DB_NAME
+  unset DOCKER_BOOTSTRAP_DB_USER
+  unset DOCKER_BOOTSTRAP_DB_PASS
+  unset DOCKER_BOOTSTRAP_DB_PORT
 
+  echo "phoenix app images created"
+
+  mv docker/docker-compose.yml .
+  mv docker/attach_to_phoenix.sh .
+  mv docker/pgcli_to_db.sh .
 }
 
 #interactive mode
@@ -168,7 +185,7 @@ interactive() {
   # prompt user for a database name (no spaces or special characters). Default is project name.
   echo "Enter a database name (no spaces or special characters). Default is ${project_name}:"
   read -r db_name
-  while [[ ! $db_name =~ ^[a-zA-Z0-9_-]+$ ]]
+  while [[ ! $db_name =~ ^[a-zA-Z0-9_]+$ ]]
     do
       if [ -z "$db_name" ]
       then
@@ -186,7 +203,7 @@ interactive() {
   read -r db_user  
 
   # db must contain only letters and no special characters
-  while [[ ! $db_user =~ ^[a-zA-Z0-9_-]+$ ]]
+  while [[ ! $db_user =~ ^[a-zA-Z0-9_]+$ ]]
   do
       if [ -z "$db_user" ]
       then
@@ -236,7 +253,15 @@ interactive() {
   export DOCKER_BOOTSTRAP_DB_USER=${db_user}
   export DOCKER_BOOTSTRAP_DB_PASS=${db_pass}
   export DOCKER_BOOTSTRAP_DB_PORT=${db_port}
-  start_building_docker_stuff ${project_name} ${phoenix_port} ${db_name} ${db_user} ${db_pass} ${db_port}
+  start_building_docker_stuff
+  unset DOCKER_BOOTSTRAP_PHOENIX_PROJECT_NAME
+  unset DOCKER_BOOTSTRAP_PHOENIX_PORT
+  unset DOCKER_BOOTSTRAP_DB_NAME
+  unset DOCKER_BOOTSTRAP_DB_USER
+  unset DOCKER_BOOTSTRAP_DB_PASS
+  unset DOCKER_BOOTSTRAP_DB_PORT
+
+  echo "phoenix app images created"
 }
 
 # THIS IS WHERE THE MEAT OF THE WORK GOES
@@ -261,6 +286,7 @@ start_building_docker_stuff() {
   fi
 
   # make a new docker-compose.yml file from the template
+  pwd
   cp docker/docker-compose.yml.template docker/docker-compose.yml
   sed -i '' "s+<PHOENIX_APP_IMAGE_NAME>+${project_name}+g" docker/docker-compose.yml
   sed -i '' "s+<PHOENIX_APP_CONTAINER_NAME>+${project_name}+g" docker/docker-compose.yml
@@ -272,9 +298,30 @@ start_building_docker_stuff() {
   sed -i '' "s+<DB_PASSWORD>+${db_pass}+g" docker/docker-compose.yml
   sed -i '' "s+<DB_PORT>+${db_port}+g" docker/docker-compose.yml
 
+  cp docker/attach_to_phoenix.sh.template docker/attach_to_phoenix.sh
+  sed -i '' "s+<PHOENIX_PROJECT_NAME>+${project_name}+g" docker/attach_to_phoenix.sh
+
+  cp docker/pgcli_to_db.sh.template docker/pgcli_to_db.sh
+  sed -i '' "s+<DB_PORT>+${db_port}+g" docker/pgcli_to_db.sh
+  sed -i '' "s+<DB_USER>+${db_user}+g" docker/pgcli_to_db.sh
+  sed -i '' "s+<DB_NAME>+${db_name}+g" docker/pgcli_to_db.sh
+
+  cp docker/docker_files/images/phoenix/bootstrap_project.sh.template docker/docker_files/images/phoenix/bootstrap_project.sh
+  sed -i '' "s+<PHOENIX_PROJECT_NAME>+${project_name}+g" docker/docker_files/images/bootstrap_project.sh
+
+  cp docker/docker_files/images/phoenix/start_server.sh.template docker/docker_files/images/phoenix/start_server.sh
+  sed -i '' "s+<PHOENIX_PROJECT_NAME>+${project_name}+g" docker/docker_files/images/phoenix/start_server.sh
+ 
+
   # start calling build scripts
-  pushd docker
+  pushd docker/docker_files
+  #./docker/docker_files/build_images.sh ${project_name}
   ./build_images.sh ${project_name}
+  popd
+
+  # clean up the generated shell scripts in images directory
+  rm docker/docker_files/images/phoenix/bootstrap_project.sh
+  rm docker/docker_files/images/phoenix/start_server.sh
 }
 
 # a main function is used so functions can be defined throughout file

@@ -8,4 +8,4 @@ else
 fi
 
 #docker build --build-arg PROJECT_NAME=$PROJECT_NAME -t phoenix_app:base .
-docker build --build-arg PROJECT_NAME=$PROJECT_NAME -t phoenix_app_$PROJECT_NAME:base .
+docker build --build-arg PROJECT_NAME=$PROJECT_NAME -t $PROJECT_NAME .
